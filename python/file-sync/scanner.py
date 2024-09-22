@@ -1,3 +1,4 @@
+import getopt
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ IGNORE_DIRECTORIES: list[str] = []
 
 
 def print_usage() -> None:
-    print('Usage: python scanner.py "C:\path\to\folder" "label"')
+    print('Usage: python scanner.py "C:\\path\\to\\folder" "label"')
 
 
 def isExcludeDirectory(directory: str) -> bool:
@@ -55,17 +56,32 @@ def process_folder(path: Path) -> None:
 
 
 def main(argv: list[str]) -> None:
-    if not argv or len(argv) < 2:
-        print('Missing parameters :(')
+    label = None
+    path = None
+    
+    try:
+        arguments, paths = getopt.getopt(argv, 'hl:p:i:', ['help', 'label=', 'path=', 'ignore-dirs='])
+
+        for currentArgument, currentValue in arguments:
+            if currentArgument in ("-h", "--help"):
+                print_usage()
+            elif currentArgument in ("-l", "--label"):
+                label = currentValue
+            elif currentArgument in ("-p", "--path"):
+                path = Path(currentValue)
+            elif currentArgument in ("-i", "--ignore-dirs"):
+                IGNORE_DIRECTORIES.append(currentValue)
+    except getopt.error as err:
+        print (str(err))
         print_usage()
         return
 
-    path = Path(argv[0])
-    label = argv[1]
+    if not path or not path.exists() or not path.is_dir():
+        raise Exception('Missing or invalid path :(')
     
-    if not path.exists() or not path.is_dir():
-        raise Exception('Invalid path :(')
-
+    if not label:
+        raise Exception('Missing or invalid label :(')
+    
     folder_counter = 0
     file_counter = 0
     for p in path.rglob('*'):
@@ -81,7 +97,7 @@ def main(argv: list[str]) -> None:
     print(f'{folder_counter} scanned folders, {file_counter} scanned files.')
     print(f'----------------------------')
 
-    output_file = f'{label}.csv'
+    output_file = f'csv/{label}.csv'
     print(f'Exporting to file: {output_file}')
     with open(output_file, 'w', encoding='utf-8') as out:
         out.write('"FULL_PATH","DIRECTORY","FILENAME","EXTENSION","SIZE"\n')
