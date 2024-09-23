@@ -28,7 +28,7 @@ IGNORE_DIRECTORIES: list[str] = []
 
 
 def print_usage() -> None:
-    print('Usage: python scanner.py "C:\\path\\to\\folder" "label"')
+    print('Usage: python scanner.py --path "C:\\path\\to\\folder" --label "label" --ignore-dirs "/ZWOLF_HOME/_Albums"')
 
 
 def isExcludeDirectory(directory: str) -> bool:
