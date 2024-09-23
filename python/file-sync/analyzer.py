@@ -40,7 +40,7 @@ def main(argv: list[str]) -> None:
 
 
 def single_file(filename: str) -> None:
-    df = pandas.read_csv(f'{filename}.csv', encoding='utf8')
+    df = pandas.read_csv(f'csv/{filename}.csv', encoding='utf8')
 
     # filtering directories
     # df = df[ ~df[DIRECTORY].str.startswith('/ZWOLF_HOME/_Albums') ]
@@ -83,12 +83,12 @@ def single_file(filename: str) -> None:
     print(spotted)
     
     print('Exporting spotted to file')
-    spotted.to_csv(f'{filename}.spotted.csv', index=False)
+    spotted.to_csv(f'csv/{filename}.spotted.csv', index=False)
 
 
 def compare(left_name: str, right_name: str):
-    left_df = pandas.read_csv(f'{left_name}.csv', encoding='utf8')
-    right_df = pandas.read_csv(f'{right_name}.csv', encoding='utf8')
+    left_df = pandas.read_csv(f'csv/{left_name}.csv', encoding='utf8')
+    right_df = pandas.read_csv(f'csv/{right_name}.csv', encoding='utf8')
 
     # Merging left and right
     merged = left_df.merge(right_df, indicator=STATUS, how='outer').sort_values(by=DEFAULT_SORT)
@@ -108,7 +108,7 @@ def compare(left_name: str, right_name: str):
     else:
         print('Files out of sync found')
         diff[STATUS] = DIFF
-        diff.to_csv(f'{left_name}_vs_{right_name}_changes.csv', index=False)
+        diff.to_csv(f'csv/{left_name}_vs_{right_name}_changes.csv', index=False)
 
     # Files missing on either side
     sync = merged[merged[STATUS] != BOTH].sort_values(by=DEFAULT_SORT)
@@ -116,7 +116,7 @@ def compare(left_name: str, right_name: str):
         print('Directories are in sync :)')
     else:
         print('Directories out of sync')
-        sync.to_csv(f'{left_name}_vs_{right_name}_missing.csv', index=False)
+        sync.to_csv(f'csv/{left_name}_vs_{right_name}_missing.csv', index=False)
 
 
 if __name__ == "__main__":

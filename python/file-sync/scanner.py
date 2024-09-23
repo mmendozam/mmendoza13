@@ -65,6 +65,7 @@ def main(argv: list[str]) -> None:
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--help"):
                 print_usage()
+                return
             elif currentArgument in ("-l", "--label"):
                 label = currentValue
             elif currentArgument in ("-p", "--path"):
