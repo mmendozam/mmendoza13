@@ -21,6 +21,8 @@ fc \B "file1.bin" "file2.bin"
 robocopy <source> <destination> [<file>[ ...]] [<options>]
 
 robocopy C:\path\to\source E:\path\to\destination /S /Z /LOG:C:\Logs\Backup.log
+
+robocopy /s /z /xc /xn /xo B:\NNLK_HOME\media\images F:\NNLK_HOME\media\images
 ```
 
 
