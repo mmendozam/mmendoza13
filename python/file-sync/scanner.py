@@ -35,21 +35,36 @@ def isExcludeDirectory(directory: str) -> bool:
     return False
 
 
-def process_file(path: Path) -> None:
+def process_file(path: Path, content: list[FileSync] = FILES) -> None:
     parent = path.parent
     directory = str(parent.as_posix()).replace(parent.drive, '', 1)
     if isExcludeDirectory(directory):
         return
     file_sync = FileSync(directory, path.name, path.suffix, path.stat().st_size)
-    FILES.append(file_sync)
+    content.append(file_sync)
 
 
-def process_folder(path: Path) -> None:
+def process_folder(path: Path, content: list[FileSync] = FILES) -> None:
     directory = str(path.as_posix()).replace(path.drive, '', 1)
     if isExcludeDirectory(directory):
         return
     file_sync = FileSync(directory, '', '<FOLDER>', 0)
-    FILES.append(file_sync)
+    content.append(file_sync)
+
+
+def scan(path: Path) -> list[FileSync]:
+    if not path or not path.exists() or not path.is_dir():
+        raise Exception('Missing or invalid path :(')
+    
+    content: list[FileSync] = []
+    
+    for p in path.rglob('*'):
+        if p.is_dir():
+            process_folder(p, content)
+        elif p.is_file():
+            process_file(p, content)
+    
+    return content
 
 
 def main(argv: list[str]) -> None:
