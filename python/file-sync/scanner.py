@@ -1,5 +1,6 @@
 import getopt
 import sys
+import json
 from pathlib import Path
 
 
@@ -19,10 +20,6 @@ class FileSync:
 
 FILES: list[FileSync] = []
 
-# IGNORE_DIRECTORIES: list[str] = ['/ZWOLF_HOME/_Nanalka/media/images', '/ZWOLF_HOME/_Nanalka/media/videos/PLAYLISTS', '/ZWOLF_HOME/_Nanalka/dev/dlss', '/ZWOLF_HOME/_Nanalka/media/videos/tokyomotion']
-# IGNORE_DIRECTORIES: list[str] = ['/ZWOLF_HOME/_Nanalka', '/ZWOLF_HOME/_Albums']
-# IGNORE_DIRECTORIES: list[str] = ['/ZWOLF_HOME/_Nanalka/media/videos/tokyomotion', '/ZWOLF_HOME/_Nanalka/media/videos/afreecatv', '/ZWOLF_HOME/_Nanalka/media/videos/PLAYLISTS']
-# IGNORE_DIRECTORIES: list[str] = ['/ZWOLF_HOME/_Nanalka', '/ZWOLF_HOME/_Albums', '/ZWOLF_HOME/tmp']
 
 IGNORE_DIRECTORIES: list[str] = []
 
@@ -61,7 +58,6 @@ def main(argv: list[str]) -> None:
     
     try:
         arguments, paths = getopt.getopt(argv, 'hl:p:i:', ['help', 'label=', 'path=', 'ignore-dirs='])
-
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--help"):
                 print_usage()
@@ -98,12 +94,17 @@ def main(argv: list[str]) -> None:
     print(f'{folder_counter} scanned folders, {file_counter} scanned files.')
     print(f'----------------------------')
 
-    output_file = f'csv/{label}.csv'
-    print(f'Exporting to file: {output_file}')
-    with open(output_file, 'w', encoding='utf-8') as out:
-        out.write('"FULL_PATH","DIRECTORY","FILENAME","EXTENSION","SIZE"\n')
+    csv_file = f'csv/{label}.csv'
+    print(f'Exporting CSV: {csv_file}')
+    with open(csv_file, 'w', encoding='utf-8') as csv_out:
+        csv_out.write('"FULL_PATH","DIRECTORY","FILENAME","EXTENSION","SIZE"\n')
         for f in FILES:
-            out.write(f'{f.to_csv()}\n')
+            csv_out.write(f'{f.to_csv()}\n')
+    
+    json_file = f'json/{label}.json'
+    print(f'Exporting JSON: {json_file}')
+    with open(json_file, 'w', encoding='utf-8') as json_out:
+        json.dump([f.__dict__ for f in FILES], json_out, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
