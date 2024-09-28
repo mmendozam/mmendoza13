@@ -91,7 +91,10 @@ def main(argv: list[str]) -> None:
             process_file(p)
 
     print(f'----------------------------')
-    print(f'{folder_counter} scanned folders, {file_counter} scanned files.')
+    print(f'{folder_counter} scanned folders')
+    print(f'{file_counter} scanned files.')
+    if IGNORE_DIRECTORIES:
+        print(f'{len(IGNORE_DIRECTORIES)} ignored folders.')
     print(f'----------------------------')
 
     csv_file = f'csv/{label}.csv'
