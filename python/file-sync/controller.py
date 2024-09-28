@@ -37,13 +37,13 @@ def content():
 
     if STATE.content:
         response.status = 'cached content'
-        response.data = STATE.content
+        response.data = [c.__dict__ for c in STATE.content]
     elif not STATE.scanning:
         STATE.scanning = True
         response.status = 'started scan'
         path = Path('E:/NNLK_HOME')
         STATE.content = scan(path)
-        response.data = STATE.content
+        response.data = [c.__dict__ for c in STATE.content]
         STATE.scanning = False
     else:
         response.status = 'scan is running, wait until it is done'
