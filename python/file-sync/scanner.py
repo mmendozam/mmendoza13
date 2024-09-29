@@ -40,7 +40,8 @@ def process_file(path: Path, content: list[FileSync] = FILES) -> None:
     directory = str(parent.as_posix()).replace(parent.drive, '', 1)
     if isExcludeDirectory(directory):
         return
-    file_sync = FileSync(directory, path.name, path.suffix, path.stat().st_size)
+    file_sync = FileSync(directory, path.name,
+                         path.suffix, path.stat().st_size)
     content.append(file_sync)
 
 
@@ -55,24 +56,25 @@ def process_folder(path: Path, content: list[FileSync] = FILES) -> None:
 def scan(path: Path) -> list[FileSync]:
     if not path or not path.exists() or not path.is_dir():
         raise Exception('Missing or invalid path :(')
-    
+
     content: list[FileSync] = []
-    
+
     for p in path.rglob('*'):
         if p.is_dir():
             process_folder(p, content)
         elif p.is_file():
             process_file(p, content)
-    
+
     return content
 
 
 def main(argv: list[str]) -> None:
     label = None
     path = None
-    
+
     try:
-        arguments, paths = getopt.getopt(argv, 'hl:p:i:', ['help', 'label=', 'path=', 'ignore-dirs='])
+        arguments, paths = getopt.getopt(
+            argv, 'hl:p:i:', ['help', 'label=', 'path=', 'ignore-dirs='])
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--help"):
                 print_usage()
@@ -84,16 +86,16 @@ def main(argv: list[str]) -> None:
             elif currentArgument in ("-i", "--ignore-dirs"):
                 IGNORE_DIRECTORIES.append(currentValue)
     except getopt.error as err:
-        print (str(err))
+        print(str(err))
         print_usage()
         return
 
     if not path or not path.exists() or not path.is_dir():
         raise Exception('Missing or invalid path :(')
-    
+
     if not label:
         raise Exception('Missing or invalid label :(')
-    
+
     folder_counter = 0
     file_counter = 0
     for p in path.rglob('*'):
@@ -115,14 +117,16 @@ def main(argv: list[str]) -> None:
     csv_file = f'csv/{label}.csv'
     print(f'Exporting CSV: {csv_file}')
     with open(csv_file, 'w', encoding='utf-8') as csv_out:
-        csv_out.write('"FULL_PATH","DIRECTORY","FILENAME","EXTENSION","SIZE"\n')
+        csv_out.write(
+            '"FULL_PATH","DIRECTORY","FILENAME","EXTENSION","SIZE"\n')
         for f in FILES:
             csv_out.write(f'{f.to_csv()}\n')
-    
+
     json_file = f'json/{label}.json'
     print(f'Exporting JSON: {json_file}')
     with open(json_file, 'w', encoding='utf-8') as json_out:
-        json.dump([f.__dict__ for f in FILES], json_out, ensure_ascii=False, indent=4)
+        json.dump([f.__dict__ for f in FILES], json_out,
+                  ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
