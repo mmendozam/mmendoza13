@@ -1,5 +1,6 @@
 from flask import Flask
 from pathlib import Path
+import datetime
 from scanner import FileSync, scan
 
 
@@ -7,45 +8,31 @@ from scanner import FileSync, scan
 # set PYTHONPATH=E:\local\GitHub\mmendozam\mmendoza13\python\file-sync
 # flask --app controller run
 
-
 class State:
     def __init__(self) -> None:
-        self.scanning = False
+        self.running = False
         self.content: list[FileSync] = []
-
-
-class Response:
-    def __init__(self) -> None:
-        self.status = None
-        self.data = None
+        self.date: str = None
 
 
 app = Flask(__name__)
 
-
 STATE = State()
 
 
-@app.route('/status')
-def status():
-    return STATE.__dict__
+def get_data() -> dict[str, object]:
+    return {
+        'date': STATE.date,
+        'data': [c.__dict__ for c in STATE.content]
+    }
 
 
 @app.route('/content')
-def content():
-    response = Response()
+def content() -> dict[str, object]:
+    if not STATE.content and not STATE.running:
+        STATE.running = True
+        STATE.content = scan(Path('E:/NNLK_HOME'))
+        STATE.date = datetime.datetime.now()
+        STATE.running = False
 
-    if STATE.content:
-        response.status = 'cached content'
-        response.data = [c.__dict__ for c in STATE.content]
-    elif not STATE.scanning:
-        STATE.scanning = True
-        response.status = 'started scan'
-        path = Path('E:/NNLK_HOME')
-        STATE.content = scan(path)
-        response.data = [c.__dict__ for c in STATE.content]
-        STATE.scanning = False
-    else:
-        response.status = 'scan is running, wait until it is done'
-
-    return response.__dict__
+    return get_data()
