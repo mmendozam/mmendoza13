@@ -1,0 +1,6 @@
+
+*.txt
+*.pyc
+*.log
+python/file-sync/csv/*
+python/file-sync/json/*
