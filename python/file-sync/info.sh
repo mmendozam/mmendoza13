@@ -21,9 +21,9 @@ NET USE H: /delete
 fc file1.txt file2.txt
 
 # ############################
-# Notes
-# 1. LAPTOP NNLK is fully sync'd with TSB_BACKUP
-#   1.1. TSB_BACKUP contains TOKYOMOTION files that LAPTOP does not
+# TODO
+# 1. Add a way to determine if all the files in $LOCATION1 are in $LOCATION2
+# 2. Add usage for the generated .json files
 
 # 1 - Scan directories
 python scanner.py $PATH_TO_SCAN [$OUTPUT_FILE]
