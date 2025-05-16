@@ -67,6 +67,10 @@ def scan(path: Path) -> list[FileSync]:
 
     return content
 
+def toJsonString(content: list[FileSync]) -> str:
+    if not content:
+        content = []
+    return json.dumps([f.__dict__ for f in content], ensure_ascii=False, indent=4)
 
 def main(argv: list[str]) -> None:
     label = None
