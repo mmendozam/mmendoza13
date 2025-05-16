@@ -1,7 +1,7 @@
 from flask import Flask
 from pathlib import Path
 import datetime
-from scanner import scan
+from .scanner import scan
 
 
 # To run:
